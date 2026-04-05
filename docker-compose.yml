@@ -1,0 +1,12 @@
+name: jizhang
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: jizhang-nginx
+    restart: unless-stopped
+    ports:
+      - "8899:80"
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
