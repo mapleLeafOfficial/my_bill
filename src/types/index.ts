@@ -56,3 +56,23 @@ export interface TransferSuggestion {
   to: Member
   amount: number
 }
+
+export type ShoppingNoteStatus = 'open' | 'claimed' | 'done'
+
+export interface ShoppingNote {
+  id: string
+  item_name: string
+  message: string | null
+  created_by: string
+  claimer_id: string | null
+  status: ShoppingNoteStatus
+  created_at: string
+  updated_at: string
+  creator?: Member
+  claimer?: Member | null
+}
+
+export interface ShoppingNoteForm {
+  item_name: string
+  message: string
+}

@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom'
-import { Home, Receipt, Users, Calculator } from 'lucide-react'
+import { Home, Receipt, Users, Calculator, ClipboardList } from 'lucide-react'
 import { MembersPage } from '@/pages/MembersPage'
 import { ExpensesPage } from '@/pages/ExpensesPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { SettlementPage } from '@/pages/SettlementPage'
+import { NotesPage } from '@/pages/NotesPage'
 import { Button } from '@/components/ui/button'
 import { UserSwitcher } from '@/components/UserSwitcher'
 import { useMembers } from '@/hooks/useMembers'
@@ -14,6 +15,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     { to: '/', label: '概览', icon: Home },
     { to: '/expenses', label: '支出', icon: Receipt },
     { to: '/settlement', label: '结算', icon: Calculator },
+    { to: '/notes', label: '备注', icon: ClipboardList },
     { to: '/members', label: '成员', icon: Users },
   ]
 
@@ -96,6 +98,7 @@ function App() {
           <Route path="/expenses" element={<ExpensesPage />} />
           <Route path="/members" element={<MembersPage />} />
           <Route path="/settlement" element={<SettlementPage />} />
+          <Route path="/notes" element={<NotesPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
