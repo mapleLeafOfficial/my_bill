@@ -2,16 +2,19 @@ name: Deploy Frontend
 
 on:
   push:
-    branches: [ main ] # 当代码推送到 main 分支时自动触发
-  workflow_dispatch:   # 保留手动触发按钮，方便排查问题
+    branches: [ main ]
+  workflow_dispatch:
 
 concurrency:
   group: deploy-frontend
-  cancel-in-progress: true # 如果有新提交，自动取消旧的构建任务
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # 👇 关键新增：告诉 GitHub 去 SERVER_HOST 环境中读取 Secrets
+    environment: SERVER_HOST 
+    
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -19,7 +22,7 @@ jobs:
       - name: 设置 Node.js 环境
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 可根据你的项目实际 node 版本修改
+          node-version: '20'
           cache: 'npm'
 
       - name: 安装依赖
@@ -27,7 +30,7 @@ jobs:
 
       - name: 构建项目产物
         env:
-          # 注入你的 Supabase 环境变量供 Vite 打包时使用
+          # 这两个由于放在了 Repository secrets 中，Action 会自动继承读取
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: npm run build
@@ -35,13 +38,11 @@ jobs:
       - name: 传输产物到服务器
         uses: appleboy/scp-action@master
         with:
+          # 这里会自动从你配置的 SERVER_HOST 环境中提取对应的值
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          # 关键点：这里指定 source 为 dist 文件夹
           source: "dist"
-          # 直接写死你的绝对路径
           target: "/home/theMX/docker_data/记账"
-          # overwrite 为 true，直接覆盖旧的产物文件
           overwrite: true
